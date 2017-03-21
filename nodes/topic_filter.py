@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import rospy
-
+import numpy as np
 from std_msgs.msg import Float64
 from openag.var_types import EnvVar, GROUP_ENVIRONMENT, WATER_LEVEL_HIGH
 
@@ -12,23 +12,97 @@ ENVIRONMENT_VARIABLES = tuple(
 )
 
 
-class EWMA:
+class RollingMedian(object):
     """
-    Calculate the Exponentially Weighted Moving Average (EWMA) for an input variable.
-    EWMAi = alpha * Xi + (1 - alpha) * EWMAi-1
-    Params:
-        a : Alpha is the dapening coefficient. The lower the value the less damped. Should be between 0 and 1
+    Calculates the median for the last n points. Could be a potential alternative to EWMA
     """
-    def __init__(self, a):
-        self.a = a
+    def __init__(self, num_initial_values=100, filter_results=True):
         self.average = None
+        self.recent_values = []
+        self.FILTER_RESULTS = filter_results
+        self.NUM_INITIAL_VALUES = num_initial_values
 
     def __call__(self, sample):
         # Update the average
         if self.average is None:
             self.average = sample
             return
-        self.average = self.a * sample + (1 - self.a) * self.average
+        self.shift_recent_values(sample)
+        self.average = np.median(self.recent_values)
+
+    def shift_recent_values(self, sample):
+        self.recent_values.append(sample)
+        if len(self.recent_values) > self.NUM_INITIAL_VALUES:
+            self.recent_values.pop(0)
+
+
+class EWMA(object):
+    """
+    Calculate the Exponentially Weighted Moving Average (EWMA) for an input variable.
+    EWMAi = alpha * Xi + (1 - alpha) * EWMAi-1
+    Highly dependent on the number of values used to calculate the percentile. Need to be enough to capture the baseline distribution.
+      # Todo: Explore other ways to ensure this is long enough.
+    Params:
+        a : Alpha is the dapening coefficient. The lower the value the less damped. Should be between 0 and 1
+    """
+    def __init__(self, a, filter_results=True):
+        self.a = a
+        self.average = None
+        self.IQR = None   # IQR = InterQuartile Range, https://simple.wikipedia.org/wiki/Interquartile_range
+        self.recent_values = []
+        self.IQR_MULTIPLE = 5
+        self.filter_results = filter_results
+        self.NUM_INITIAL_VALUES = 100
+
+    def __call__(self, sample):
+        # Update the average
+        if self.average is None:
+            self.average = sample
+            return
+        self.shift_recent_values(sample)
+        self.calc_iqr()
+        if len(self.recent_values) == self.NUM_INITIAL_VALUES - 1 and self.filter_results:
+            self.recalculate_ewma_excluding_fliers()  # Uses median as a starting point
+        if not self.is_outlier(sample):
+            self.average = self.a * sample + (1 - self.a) * self.average
+
+    def shift_recent_values(self, sample):
+        self.recent_values.append(sample)
+        if len(self.recent_values) > self.NUM_INITIAL_VALUES:
+            self.recent_values.pop(0)
+
+    def calc_iqr(self):
+        if self.IQR is None:
+            self.IQR = self.average + 1    # Not the real IQR, but will work to ensure first samples aren't filtered out
+                                           # + 1 in case the average is zero
+            return
+        if len(self.recent_values) > 10:
+            self.IQR = (np.percentile(self.recent_values, 75) - np.percentile(self.recent_values, 25))/3
+            # print("IQR: {:f}".format(self.IQR))
+
+    def recalculate_ewma_excluding_fliers(self):
+        """
+        Recalculate ewma once there is enough data points to establish a reasonable confidence of distribution width
+        Assumes calc_iqr was already run on the previous calls.
+        :return:
+        """
+        self.average = np.median(self.recent_values)
+        for value in self.recent_values:
+            if not self.is_outlier(value):
+                self.average = self.a * value + (1 - self.a) * self.average
+
+    def is_outlier(self, sample):
+        """
+        Filter out values outside the Interquartile range (IQR)
+        :param sample:
+        :return:
+        """
+        if not self.filter_results:
+            return False
+        lower_limit = self.average - self.IQR_MULTIPLE*self.IQR
+        upper_limit = self.average + self.IQR_MULTIPLE*self.IQR
+        # print(list(map(lambda x: "{:0.1f}".format(x), (lower_limit, self.average, upper_limit))))
+        return not (lower_limit <= sample <= upper_limit)
 
 
 def filter_topic(src_topic, dest_topic, topic_type):

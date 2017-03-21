@@ -1,76 +1,7 @@
-# from openag_brain.software_modules.topic_filter import EWMA
+from nodes.topic_filter import EWMA
 import numpy as np
 import unittest
 import random
-
-
-class EWMA(object):
-    """
-    Calculate the Exponentially Weighted Moving Average (EWMA) for an input variable.
-    EWMAi = alpha * Xi + (1 - alpha) * EWMAi-1
-    Params:
-        a : Alpha is the dapening coefficient. The lower the value the less damped. Should be between 0 and 1
-    """
-    def __init__(self, a, filter_results=True):
-        self.a = a
-        self.average = None
-        self.IQR = None   # IQR = InterQuartile Range, https://simple.wikipedia.org/wiki/Interquartile_range
-        self.recent_values = []
-        self.IQR_MULTIPLE = 5
-        self.filter_results = filter_results
-        self.NUM_INITIAL_VALUES = 20
-
-    def __call__(self, sample):
-        # Update the average
-        if self.average is None:
-            self.average = sample
-            return
-        self.shift_recent_values(sample)
-        self.calc_iqr(sample)
-        if len(self.recent_values) == self.NUM_INITIAL_VALUES - 1 and self.filter_results:
-            self.recalculate_ewma_excluding_fliers() # Uses median as a starting point
-        if not self.is_outlier(sample):
-            self.average = self.a * sample + (1 - self.a) * self.average
-        else:
-            print("Outlier Found! {:3f}".format(sample))
-
-    def shift_recent_values(self, sample):
-        self.recent_values.append(sample)
-        if len(self.recent_values) > self.NUM_INITIAL_VALUES:
-            self.recent_values.pop(0)
-
-    def calc_iqr(self, sample):
-        if self.IQR is None:
-            self.IQR = self.average + 1    # Not the real IQR, but will work to ensure first samples aren't filtered out
-                                           # + 1 in case the average is zero
-            return
-        if len(self.recent_values) > 10:
-            self.IQR = (np.percentile(self.recent_values, 75) - np.percentile(self.recent_values, 25))/3
-            # print("IQR: {:f}".format(self.IQR))
-
-    def recalculate_ewma_excluding_fliers(self):
-        """
-        Recalculate ewma once there is enough data points to establish a reasonable confidence of distribution width
-        Assumes calc_iqr was already run on the previous calls.
-        :return:
-        """
-        self.average = np.median(self.recent_values)
-        for value in self.recent_values:
-            if not self.is_outlier(value):
-                self.average = self.a * value + (1 - self.a) * self.average
-
-    def is_outlier(self, sample):
-        """
-        Filter out values outside the Interquartile range (IQR)
-        :param sample:
-        :return:
-        """
-        if not self.filter_results:
-            return False
-        lower_limit = self.average - self.IQR_MULTIPLE*self.IQR
-        upper_limit = self.average + self.IQR_MULTIPLE*self.IQR
-        # print(list(map(lambda x: "{:0.1f}".format(x), (lower_limit, self.average, upper_limit))))
-        return not (lower_limit <= sample <= upper_limit)
 
 
 def compare_function_output(func, input, output_expected):
