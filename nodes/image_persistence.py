@@ -30,7 +30,7 @@ def get_camera_variables():
     # Filter a list of environmental variables that are specific to camera
     return tuple(
         var for var in env_var
-        if groups['camera'] in var.groups
+        if groups['camera'] in var['groups']
     )
 
 CAMERA_VARIABLES = get_camera_variables()
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     env_var_db = server[ENVIRONMENTAL_DATA_POINT]
     persistence_objs = []
     for variable in CAMERA_VARIABLES:
-        topic = "{}/image_raw".format(variable)
+        topic = "{}/image_raw".format(variable['name'])
         persistence_objs.append(ImagePersistence(
             db=env_var_db, topic=topic, variable=variable,
             environment=environment_id,

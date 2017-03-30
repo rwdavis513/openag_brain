@@ -17,7 +17,7 @@ import rospy
 from openag.db_names import ENVIRONMENTAL_DATA_POINT, RECIPE
 from openag.cli.config import config as cli_config
 from openag.models import EnvironmentalDataPoint
-from openag.var_types import RECIPE_START, RECIPE_END, EnvVar
+
 from couchdb import Server
 from std_msgs.msg import Float64
 from threading import RLock
@@ -27,8 +27,17 @@ from openag_brain.utils import gen_doc_id, read_environment_from_ns
 from openag_brain.memoize import memoize
 from openag_brain.multidispatch import multidispatch
 
+
+from openag.var_types import RECIPE_START, RECIPE_END, EnvVar
+
+
+def get_valid_variables():
+    env_var = rospy.get_param('/enviornment_variables')
+    return frozenset([var['name'] for var in env_var])
+
 # Create a tuple constant of valid environmental variables
-VALID_VARIABLES = frozenset(EnvVar.items.keys())
+VALID_VARIABLES = get_valid_variables()
+
 
 @memoize
 def publisher_memo(topic, MsgType, queue_size):
