@@ -16,21 +16,25 @@ from PIL import Image
 from couchdb import Server
 from StringIO import StringIO
 from sensor_msgs.msg import Image as ImageMsg
-from re import match
 
 from openag.cli.config import config as cli_config
 from openag.models import EnvironmentalDataPoint, SoftwareModule
 from openag.db_names import ENVIRONMENTAL_DATA_POINT, SOFTWARE_MODULE
-from openag.var_types import EnvVar, GROUP_CAMERA
 
-from openag_brain import params
 from openag_brain.utils import read_environment_from_ns
 
-# Filter a list of environmental variables that are specific to camera
-CAMERA_VARIABLES = tuple(
-    var for var in EnvVar.items.values()
-    if GROUP_CAMERA in var.groups
-)
+
+def get_camera_variables():
+    env_var = rospy.get_param('/environment_variables')
+    groups = rospy.get_param('/environment_variables/groups')
+    # Filter a list of environmental variables that are specific to camera
+    return tuple(
+        var for var in env_var
+        if groups['camera'] in var.groups
+    )
+
+CAMERA_VARIABLES = get_camera_variables()
+
 
 class ImagePersistence:
     image_format_mapping = {
