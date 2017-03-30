@@ -26,7 +26,7 @@ from openag_brain.utils import read_environment_from_ns
 
 def get_camera_variables():
     env_var = rospy.get_param('/environment_variables')
-    groups = rospy.get_param('/environment_variables/groups')
+    groups = rospy.get_param('/variable_groups')
     # Filter a list of environmental variables that are specific to camera
     return tuple(
         var for var in env_var

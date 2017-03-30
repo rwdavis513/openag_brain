@@ -1,12 +1,18 @@
+variable_groups:
+  environment: "enviornment"
+  camera: "camera"
+  user: "user"
+  recipe: "recipe"
+
 environment_variables:
 - name: air_temperature
   description: "Temperature of the air in degrees Celcius"
   units: "degrees C"
-  groups: "envioronment"
+  groups: "environment"
 - name: air_humidity
   description: "A measure of the concentration of water in the air relative to the maximum concentration at the current temperature"
   units: "percent relative"
-  groups: "envioronment"
+  groups: "environment"
 - name: air_carbon_dioxide
   description: "The amount of Carbon Dioxide in the air"
   units: "ppm"
