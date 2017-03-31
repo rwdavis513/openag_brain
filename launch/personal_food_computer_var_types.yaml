@@ -1,84 +1,104 @@
-variable_groups:
-  environment: "enviornment"
-  camera: "camera"
-  user: "user"
-  recipe: "recipe"
-
 environment_variables:
-- name: air_temperature
-  description: "Temperature of the air in degrees Celcius"
-  units: "degrees C"
-  groups: "environment"
-- name: air_humidity
-  description: "A measure of the concentration of water in the air relative to the maximum concentration at the current temperature"
-  units: "percent relative"
-  groups: "environment"
-- name: air_carbon_dioxide
-  description: "The amount of Carbon Dioxide in the air"
-  units: "ppm"
-  groups: "environment"
-- name: air_flush_on
-  description: "Turn on air flush (off by default)"
-  groups: "environment"
-- name: water_temperature
-  description: "Temperature of the water in degrees Celcius"
-  units: "degrees C"
-  groups: "environment"
-- name: water_potential_hydrogen
-  description: "Potential Hydrogen of the water"
-  units: "pH"
-  groups: "environment"
-- name: water_electrical_conductivity
-  description: "Electrical conductivity of the water"
-  units: "uS/cm"
-  groups: "environment"
-- name: water_oxidation_reduction_potential
-  description: "Oxidation-reduction potential of the water"
-  units: "mV"
-  groups: "environment"
-- name: water_dissolved_oxygen
-  description: "A measure of the amount of oxygen in the water"
-  units: "mg/L"
-  groups: "environment"
-- name: water_level_high
-  description: "Is water above threshold?"
-  groups: "environment"
-- name: nutrient_flora_duo_a
-  description: "FloraDuo nutrient A"
-  groups: "environment"
-- name: nutrient_flora_duo_b
-  description: "FloraDuo nutrient B"
-  groups: "environment"
-- name: light_illuminance
-  description: "The intensity of light falling at the plants"
-  units: "lux"
-  groups: "environment"
-- name: light_intensity_red
-  description: "The intensity setting for light panel"
-  units: "percent relative"
-  groups: "environment"
-- name: light_intensity_blue
-  description: "The intensity setting for light panel"
-  units: "percent relative"
-  groups: "environment"
-- name: light_intensity_white
-  description: "The intensity setting for light panel"
-  units: "percent relative"
-  groups: "environment"
-- name: recipe_start
-  description: "Represents the start of a recipe"
-  groups: "recipe"
-- name: recipe_end
-  description: "Represents the end of a recipe"
-  groups: "recipe"
-- name: marker
-  description: "Marks some user-defined event"
-  groups: "user"
-- name: aerial_image
-  description: "Image from above the tray looking down on the plants"
-  units: "png"
-  groups: "camera"
-- name: frontal_image
-  description: "Image from in front of the tray looking towards the plants"
-  units: "png"
-  groups: "camera"
+  variable_group_types:
+    environment: "enviornment"
+    camera: "camera"
+    user: "user"
+    recipe: "recipe"
+  air_temperature:
+    name: air_temperature
+    description: "Temperature of the air in degrees Celcius"
+    units: "degrees C"
+    groups: "environment"
+  air_humidity:
+    name: air_humidity
+    description: "A measure of the concentration of water in the air relative to the maximum concentration at the current temperature"
+    units: "percent relative"
+    groups: "environment"
+  air_carbon_dioxide:
+    name: air_carbon_dioxide
+    description: "The amount of Carbon Dioxide in the air"
+    units: "ppm"
+    groups: "environment"
+  air_flush_on:
+    name: air_flush_on
+    description: "Turn on air flush (off by default)"
+    groups: "environment"
+  water_temperature:
+    name: water_temperature
+    description: "Temperature of the water in degrees Celcius"
+    units: "degrees C"
+    groups: "environment"
+  water_potential_hydrogen:
+    name: water_potential_hydrogen
+    description: "Potential Hydrogen of the water"
+    units: "pH"
+    groups: "environment"
+  water_electrical_conductivity:
+    name: water_electrical_conductivity
+    description: "Electrical conductivity of the water"
+    units: "uS/cm"
+    groups: "environment"
+  water_oxidation_reduction_potential:
+    name: water_oxidation_reduction_potential
+    description: "Oxidation-reduction potential of the water"
+    units: "mV"
+    groups: "environment"
+  water_dissolved_oxygen:
+    name: water_dissolved_oxygen
+    description: "A measure of the amount of oxygen in the water"
+    units: "mg/L"
+    groups: "environment"
+  water_level_high:
+    name: water_level_high
+    description: "Is water above threshold?"
+    groups: "environment"
+  nutrient_flora_duo_a:
+    name: nutrient_flora_duo_a
+    description: "FloraDuo nutrient A"
+    groups: "environment"
+  nutrient_flora_duo_b:
+    name: nutrient_flora_duo_b
+    description: "FloraDuo nutrient B"
+    groups: "environment"
+  light_illuminance:
+    name: light_illuminance
+    description: "The intensity of light falling at the plants"
+    units: "lux"
+    groups: "environment"
+  light_intensity_red:
+    name: light_intensity_red
+    description: "The intensity setting for light panel"
+    units: "percent relative"
+    groups: "environment"
+  light_intensity_blue:
+    name: light_intensity_blue
+    description: "The intensity setting for light panel"
+    units: "percent relative"
+    groups: "environment"
+  light_intensity_white:
+    name: light_intensity_white
+    description: "The intensity setting for light panel"
+    units: "percent relative"
+    groups: "environment"
+  recipe_start:
+    name: recipe_start
+    description: "Represents the start of a recipe"
+    groups: "recipe"
+  recipe_end:
+    name: recipe_end
+    description: "Represents the end of a recipe"
+    groups: "recipe"
+  marker:
+    name: marker
+    description: "Marks some user-defined event"
+    groups: "user"
+  aerial_image:
+    name: aerial_image
+    description: "Image from above the tray looking down on the plants"
+    units: "png"
+    groups: "camera"
+  frontal_image:
+    name: frontal_image
+    description: "Image from in front of the tray looking towards the plants"
+    units: "png"
+    groups: "camera"
