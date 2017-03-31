@@ -76,8 +76,8 @@ def filter_all_variable_topics(variables):
     `(topic, type)`, publishes a filtered topic endpoint.
     """
     for env_var in variables:
-        src_topic = "{}/raw".format(env_var)
-        dest_topic = "{}/measured".format(env_var)
+        src_topic = "{}/raw".format(env_var['name'])
+        dest_topic = "{}/measured".format(env_var['name'])
         # Ignore type associated with environmental variable type and
         # coerce to Float64
 

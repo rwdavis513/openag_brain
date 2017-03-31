@@ -90,7 +90,7 @@ def create_persistence_objects(
     env_var_db = server[ENVIRONMENTAL_DATA_POINT]
     for variable in ENVIRONMENT_VARIABLES:
         variable = str(variable)
-        topic = "{}/measured".format(variable)
+        topic = "{}/measured".format(variable['name'])
         TopicPersistence(
             topic=topic, topic_type=Float64,
             environment=environment_id,
