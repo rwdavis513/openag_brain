@@ -19,14 +19,21 @@ from openag.cli.config import config as cli_config
 from openag.models import EnvironmentalDataPoint
 from openag.db_names import ENVIRONMENTAL_DATA_POINT
 from openag_brain.utils import read_environment_from_ns
-from openag.var_types import EnvVar, GROUP_ENVIRONMENT
+
 
 # Filter a list of environmental variables that are specific to environment
 # sensors and actuators
-ENVIRONMENT_VARIABLES = tuple(
-    var for var in EnvVar.items.values()
-    if GROUP_ENVIRONMENT in var.groups
-)
+def get_environment_variables():
+    env_var = rospy.get_param('/environment_variables')
+    groups = env_var['variable_group_types']
+    # Filter a list of environmental variables that are specific to camera
+    return tuple(
+        var for var in env_var.keys()
+        if groups['environment'] in var['groups']
+    )
+
+ENVIRONMENT_VARIABLES = get_environment_variables()
+
 
 class TopicPersistence:
     def __init__(

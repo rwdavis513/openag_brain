@@ -93,7 +93,7 @@ class SimpleRecipe:
         # If start time was now (or in the very recent past), yield
         # a recipe start setpoint.
         if time.time() - self.start_time < 1:
-            yield (self.start_time, RECIPE_START.name, self.id)
+            yield (self.start_time, RECIPE_START['name'], self.id)
         for t, variable, value in self.operations:
             # While we wait for time to catch up to timestamp, yield the
             # previous state once every second.
@@ -115,7 +115,7 @@ class SimpleRecipe:
         # on the last iteration, then yield a RECIPE_END setpoint.
         for state_variable, state_value in state.iteritems():
             yield (time.time(), variable, value)
-        yield (time.time(), RECIPE_END.name, self.id)
+        yield (time.time(), RECIPE_END['name'], self.id)
 
 def hrs_to_seconds(hrs):
     return hrs * (60 * 60)
@@ -141,7 +141,7 @@ class PhasedRecipeInterpreter:
         # Initialize end_of_phase variable. We add time to this variable
         # at the beginning of every phase.
         end_of_phase = self.start_time
-        yield (rospy.get_time(), RECIPE_START.name, self.id)
+        yield (rospy.get_time(), RECIPE_START['name'], self.id)
         for stage in self.stages:
             # Each cycle is a pair of day and night phases. So we take the
             # number of cycles in this stage and double it.
@@ -158,7 +158,7 @@ class PhasedRecipeInterpreter:
                     for key in VALID_VARIABLES.intersection(phase_keys):
                         yield (rospy.get_time(), key, float(phase[key]))
                     rospy.sleep(self.timeout)
-        yield (rospy.get_time(), RECIPE_END.name, self.id)
+        yield (rospy.get_time(), RECIPE_END['name'], self.id)
 
 class RecipeRunningError(Exception):
     """Thrown when trying to set a recipe, but recipe is already running."""
@@ -308,8 +308,8 @@ class RecipeHandler:
         # Get the recipe that has been started most recently
         start_view = self.env_data_db.view(
             "openag/by_variable",
-            startkey=[self.environment, "desired", RECIPE_START.name],
-            endkey=[self.environment, "desired", RECIPE_START.name, {}],
+            startkey=[self.environment, "desired", RECIPE_START['name']],
+            endkey=[self.environment, "desired", RECIPE_START['name'], {}],
             group_level=3
         )
         if len(start_view) == 0:
@@ -319,8 +319,8 @@ class RecipeHandler:
         # recipe was started, don't run the recipe
         end_view = self.env_data_db.view(
             "openag/by_variable",
-            startkey=[self.environment, "desired", RECIPE_END.name],
-            endkey=[self.environment, "desired", RECIPE_END.name, {}],
+            startkey=[self.environment, "desired", RECIPE_END['name']],
+            endkey=[self.environment, "desired", RECIPE_END['name'], {}],
             group_level=3
         )
         if len(end_view):

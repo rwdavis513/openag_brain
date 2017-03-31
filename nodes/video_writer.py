@@ -7,18 +7,25 @@ import os
 import rospy
 import tempfile
 import threading
-import subprocess
 from openag.cli.config import config as cli_config
 from openag.couch import Server
 from openag.db_names import ENVIRONMENTAL_DATA_POINT
-from openag.var_types import RECIPE_START, RECIPE_END, EnvVar, GROUP_CAMERA
 from openag_brain.video_helpers import *
 
+RECIPE_START = rospy.get_param('/environment_variables/recipe_start')
+RECIPE_END = rospy.get_param('/environment_variables/recipe_end')
+
 # Filter a list of environmental variables that are specific to camera
-CAMERA_VARIABLES = tuple(
-    var for var in EnvVar.items.values()
-    if GROUP_CAMERA in var.groups
-)
+def get_camera_variables():
+    env_var = rospy.get_param('/environment_variables')
+    groups = env_var['variable_group_types']
+    # Filter a list of environmental variables that are specific to camera
+    return tuple(
+        var for var in env_var.keys()
+        if groups['camera'] in var['groups']
+    )
+
+CAMERA_VARIABLES = get_camera_variables()
 
 IMAGE_ATTACHMENT = "image"
 TIMELAPSE_ATTACHMENT = "timelapse"
@@ -90,9 +97,9 @@ class VideoWriter(object):
 
         # Figure out when the most recent recipe started
         start_view = self.data_db.view("openag/by_variable", startkey=[
-            self.environment, "desired", RECIPE_START.name
+            self.environment, "desired", RECIPE_START['name']
         ], endkey=[
-            self.environment, "desired", RECIPE_START.name, {}
+            self.environment, "desired", RECIPE_START['name'], {}
         ], group_level=3)
         if len(start_view) == 0:
             # No recipe has ever been run on this machine
@@ -101,9 +108,9 @@ class VideoWriter(object):
 
         # Make sure the recipe hasn't ended yet
         end_view = self.data_db.view("openag/by_variable", startkey=[
-            self.environment, "desired", RECIPE_END.name
+            self.environment, "desired", RECIPE_END['name']
         ], endkey=[
-            self.environment, "desired", RECIPE_END.name, {}
+            self.environment, "desired", RECIPE_END['name'], {}
         ], group_level=3)
         if len(end_view):
             self.end_doc = end_view.rows[0].value

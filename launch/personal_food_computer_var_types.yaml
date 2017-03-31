@@ -1,6 +1,6 @@
 environment_variables:
   variable_group_types:
-    environment: "enviornment"
+    environment: "environment"
     camera: "camera"
     user: "user"
     recipe: "recipe"
@@ -22,6 +22,7 @@ environment_variables:
   air_flush_on:
     name: air_flush_on
     description: "Turn on air flush (off by default)"
+    units: "boolean"
     groups: "environment"
   water_temperature:
     name: water_temperature
