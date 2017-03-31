@@ -11,8 +11,8 @@ def get_environment_variables():
     groups = env_var['variable_group_types']
     # Filter a list of environmental variables that are specific to camera
     return tuple(
-        var for var in env_var.keys()
-        if groups['environment'] in var['groups']
+        var for var in env_var.values()
+        if 'groups' in var and groups['environment'] in var['groups']
     )
 
 ENVIRONMENT_VARIABLES = get_environment_variables()
