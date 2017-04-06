@@ -70,7 +70,7 @@ class TopicPersistence:
         # Save the data point
         point = EnvironmentalDataPoint({
             "environment": self.environment,
-            "variable": self.variable,
+            "variable": self.variable['name'],
             "is_desired": self.is_desired,
             "value": value,
             "timestamp": curr_time
@@ -89,8 +89,8 @@ def create_persistence_objects(
 ):
     env_var_db = server[ENVIRONMENTAL_DATA_POINT]
     for variable in ENVIRONMENT_VARIABLES:
-        variable = str(variable)
-        topic = "{}/measured".format(variable['name'])
+        variable = str(variable['name'])
+        topic = "{}/measured".format(variable)
         TopicPersistence(
             topic=topic, topic_type=Float64,
             environment=environment_id,

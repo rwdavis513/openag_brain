@@ -93,7 +93,7 @@ class VideoWriter(object):
         last_db_seq = self.data_db.changes(
             limit=1, descending=True
         )['last_seq']
-        for var in [RECIPE_START, RECIPE_END, self.variable]:
+        for var in [RECIPE_START, RECIPE_END, self.variable['name']]:
             self.last_seq_by_var[var] = last_db_seq
 
         # Figure out when the most recent recipe started
@@ -151,7 +151,7 @@ class VideoWriter(object):
                 # A recipe is running
                 # Update the timelapse
                 imgs = sorted(
-                    self.get_variable_changes(self.variable),
+                    self.get_variable_changes(self.variable['name']),
                     key=lambda x: x["timestamp"]
                 )
                 for img in imgs:

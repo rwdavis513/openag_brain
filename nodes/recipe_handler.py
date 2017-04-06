@@ -31,7 +31,8 @@ from openag_brain.multidispatch import multidispatch
 def get_constants():
     env_var = rospy.get_param('/environment_variables')
     # Create a tuple constant of valid environmental variables
-    valid_variables = frozenset([var['name'] for var in env_var])
+    print(env_var)
+    valid_variables = frozenset([var['name'] for var in env_var if 'name' in var])
     recipe_start = env_var['RECIPE_START']
     recipe_end = env_var['RECIPE_END']
     return valid_variables, recipe_start, recipe_end
