@@ -13,18 +13,13 @@ def setup_gpio_pins():
     # Use the Broadcom SOC Pin numbers
     # Setup the Pin with Internal pullups enabled and PIN in reading mode.
     logger.debug('Setting GPIO27 / PIN13 to INPUT PULLUP')
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(27, GPIO.IN, pull_up_down = GPIO.PUD_UP) # PIN13 / YEL / SW-COM
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(13, GPIO.IN, pull_up_down = GPIO.PUD_UP) # PIN13 / BOARD 27 YEL / SW-COM
 
     # Turn delay relay on
     logger.debug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
-    GPIO.setup(22, GPIO.OUT) # PIN15 / WHT / CH1
-    GPIO.output(22, GPIO.HIGH)
-
-    # Send a stable low signal to the power switch
-    logger.debug('Setting GPIO17 / PIN11 to OUTPUT LOW')
-    GPIO.setup(17, GPIO.OUT) # PIN15 / WHT / CH1
-    GPIO.output(17, GPIO.LOW)
+    GPIO.setup(15, GPIO.OUT) # PIN15 / BOARD 22 / WHT / CH1
+    GPIO.output(15, GPIO.HIGH)
 
 
 def check_for_shutdown():
@@ -44,6 +39,7 @@ def check_for_shutdown():
                 logger.debug('Safely shutting down')
                 rospy.signal_shutdown("Safely shutting down due to Power Off Button")
                 time.sleep(5)
+                GPIO.output(15, GPIO.LOW)
                 os.system("sudo shutdown -r now")
                 break
         rospy.Rate(10)
