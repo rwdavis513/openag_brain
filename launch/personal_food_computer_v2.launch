@@ -67,4 +67,5 @@
   <node pkg="openag_brain" type="api.py" name="api"/>
   <node pkg="openag_brain" type="topic_connector.py" name="topic_connector" />
   <node pkg="openag_brain" type="sensor_info_publisher.py" name="sensor_info_publisher"/>
+  <node pkg="openag_brain" type="signal_shutdown.py" name="signal_shutdown" />
 </launch>
