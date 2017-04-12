@@ -6,7 +6,7 @@ from openag_brain.load_env_var_types import create_variables
 
 # Filter a list of environmental variables that are specific to environment
 # sensors and actuators
-ENVIRONMENT_VARIABLES = create_variables(rospy.get_param('/environment_variables'))
+ENVIRONMENT_VARIABLES = create_variables(rospy.get_param('/var_types/environment_variables'))
 
 class EWMA:
     """
@@ -84,7 +84,7 @@ def filter_all_variable_topics(variables):
         #
         # In future, we should change the architecture of the system to support
         # standard ros types under `/environment/<id>`.
-        if env_var.units is None:
+        if env_var.type is None or 'boolean' in env_var.type.lower():
             forward_topic(src_topic, dest_topic, Float64)
         else:
             filter_topic(src_topic, dest_topic, Float64)

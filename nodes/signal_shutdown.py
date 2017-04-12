@@ -1,12 +1,14 @@
-#!/bin/python
+#!/usr/bin/env python
 # Simple script for shutting down the raspberry Pi at the press of a button.
 # by Inderpreet Singh
+# Adapted by Jake Rye and Bob Davis
 
 import RPi.GPIO as GPIO
 import time
 import os
 import logging
 import rospy
+from std_msgs.msg import String
 
 
 def setup_gpio_pins():
@@ -23,7 +25,6 @@ def setup_gpio_pins():
 
 
 def check_for_shutdown():
-    rate = rospy.Rate(10) # 10hz
     # Monitor pin for stable signal to safely shutdown
     while not rospy.is_shutdown():
         if not GPIO.input(27):
@@ -42,7 +43,7 @@ def check_for_shutdown():
                 GPIO.output(15, GPIO.LOW)
                 os.system("sudo shutdown -r now")
                 break
-        rospy.Rate(10)
+        rospy.sleep(1.)
 
 
 if __name__ == '__main__':
