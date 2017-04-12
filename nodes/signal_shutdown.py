@@ -16,22 +16,22 @@ def setup_gpio_pins():
     # Setup the Pin with Internal pullups enabled and PIN in reading mode.
     logger.debug('Setting GPIO27 / PIN13 to INPUT PULLUP')
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(13, GPIO.IN, pull_up_down = GPIO.PUD_UP) # PIN13 / BOARD 27 YEL / SW-COM
+    GPIO.setup(13, GPIO.IN, pull_up_down = GPIO.PUD_UP) # PIN13 / BCM 27 YELLOW / SW-COM
 
     # Turn delay relay on
     logger.debug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
-    GPIO.setup(15, GPIO.OUT) # PIN15 / BOARD 22 / WHT / CH1
+    GPIO.setup(15, GPIO.OUT) # PIN15 / BCM 22 / WHITE / CH1
     GPIO.output(15, GPIO.HIGH)
 
 
 def check_for_shutdown():
     # Monitor pin for stable signal to safely shutdown
     while not rospy.is_shutdown():
-        if not GPIO.input(27):
+        if not GPIO.input(13):
             logger.debug('Initiating safe shutdown sequence')
             successful_debounce = True
             for i in range(5000):
-                if GPIO.input(27):
+                if GPIO.input(13):
                     logger.debug('Signal interrupted, breaking out of safe shutdown sequence')
                     successful_debounce = False
                     break
