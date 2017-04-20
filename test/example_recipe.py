@@ -2,23 +2,22 @@ recipe = {
     "_id": "general_greens",
     "format": "phased",
     "version": "1.0",
-    "Seeds": ["green_lettuce_seed", "romaine_lettuce_seed"],
-    "tags": {"Plant_type": ["lettuce", "green"],
-             "optimized": ["Yes"],
-             "certified_by": "SuperSmartScientist",
-             "optimization": ["general purpose"]
-             },
+    "seeds": ["green_lettuce_seed", "romaine_lettuce_seed"],
+    "plant_type": ["lettuce", "green"],
+    "certified_by": ["SuperSmartScientist"],
+    "optimization": ["general purpose"],
     "author": "John Doe",
-    "variable_units": {"temperature": "Celcius",  # include this
-                       "nutrients": "ml",
-                       "water_ph": "?"},
-    "step_units": "hours",
     "rating": 20,  # of stars
     "downloads": 10000,
     "date_created": "2017-02-08",
     "phases": [    # Previously operations,  How do we account for partial days at the beginning or end?
           { "name": "early",
             "cycles": 14,    # Add check for duration of a step to be a total of 24 hours. (Not a necessarity but valuable for consistency/simplicity)
+            "time_units" : "hours",
+            "variable_units": {"air_temperature": "Celcius",  # include this
+                                "nutrient_flora_duo_a": "ml",
+                                "nutrient_flora_duo_b": "ml",
+                                "light_illuminance": "percent_relative"},
             "step": { "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
                                           {"start_time": 6, "end_time": 18, "value": 23},
                                           {"start_time": 18, "end_time": 24, "value": 19}],
@@ -32,6 +31,11 @@ recipe = {
           },
           { "name": "middle",
             "cycles": 20,
+            "time_units" : "hours",
+            "variable_units": {"air_temperature": "Celcius",  # include this
+                               "nutrient_flora_duo_a": "ml",
+                               "nutrient_flora_duo_b": "ml",
+                               "light_illuminance": "percent_relative"},
             "step": { "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
                                           {"start_time": 6, "end_time": 18, "value": 23},
                                           {"start_time": 18, "end_time": 24, "value": 19}],
@@ -45,7 +49,13 @@ recipe = {
           },
           { "name": "late",
             "cycles": 7,
-            "step": { "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
+            "time_units" : "hours",
+            "variable_units": {"air_temperature": "Celcius",  # include this
+                               "nutrient_flora_duo_a": "ml",
+                               "nutrient_flora_duo_b": "ml",
+                               "light_illuminance": "percent_relative"},
+            "step": {
+                      "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
                                           {"start_time": 6, "end_time": 18, "value": 23},
                                           {"start_time": 18, "end_time": 24, "value": 19}],
                       "nutrient_flora_duo_a": [{"start_time": 0, "end_time": 6, "value": 5},
