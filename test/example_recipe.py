@@ -1,0 +1,60 @@
+recipe = {
+    "_id": "general_greens",
+    "format": "phased",
+    "version": "1.0",
+    "Seeds": ["green_lettuce_seed", "romaine_lettuce_seed"],
+    "tags": {"Plant_type": ["lettuce", "green"],
+             "optimized": ["Yes"],
+             "certified_by": "SuperSmartScientist",
+             "optimization": ["general purpose"]
+             },
+    "author": "John Doe",
+    "variable_units": {"temperature": "Celcius",  # include this
+                       "nutrients": "ml",
+                       "water_ph": "?"},
+    "step_units": "hours",
+    "rating": 20,  # of stars
+    "downloads": 10000,
+    "date_created": "2017-02-08",
+    "phases": [    # Previously operations,  How do we account for partial days at the beginning or end?
+          { "name": "early",
+            "cycles": 14,    # Add check for duration of a step to be a total of 24 hours. (Not a necessarity but valuable for consistency/simplicity)
+            "step": { "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
+                                          {"start_time": 6, "end_time": 18, "value": 23},
+                                          {"start_time": 18, "end_time": 24, "value": 19}],
+                      "nutrient_flora_duo_a": [{"start_time": 0, "end_time": 6, "value": 5},
+                                               {"start_time": 6, "end_time": 18, "value": 2},
+                                               {"start_time": 18, "end_time": 24, "value": 5}],
+                      "nutrient_flora_duo_b": [{"start_time": 0, "end_time": 6, "value": 2}],
+                      "light_illuminance": [{"start_time": 0, "end_time": 6, "value": 4},
+                                            {"start_time": 18, "end_time": 24, "value": 3}],
+                },
+          },
+          { "name": "middle",
+            "cycles": 20,
+            "step": { "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
+                                          {"start_time": 6, "end_time": 18, "value": 23},
+                                          {"start_time": 18, "end_time": 24, "value": 19}],
+                      "nutrient_flora_duo_a": [{"start_time": 0, "end_time": 6, "value": 5},
+                                               {"start_time": 6, "end_time": 18, "value": 2},
+                                               {"start_time": 18, "end_time": 24, "value": 5}],
+                      "nutrient_flora_duo_b": [{"start_time": 0, "end_time": 6, "value": 2}],
+                      "light_illuminance": [{"start_time": 0, "end_time": 6, "value": 4},
+                                            {"start_time": 18, "end_time": 24, "value": 3}]
+                },
+          },
+          { "name": "late",
+            "cycles": 7,
+            "step": { "air_temperature": [{"start_time": 0, "end_time": 6, "value": 20},
+                                          {"start_time": 6, "end_time": 18, "value": 23},
+                                          {"start_time": 18, "end_time": 24, "value": 19}],
+                      "nutrient_flora_duo_a": [{"start_time": 0, "end_time": 6, "value": 5},
+                                               {"start_time": 6, "end_time": 18, "value": 2},
+                                               {"start_time": 18, "end_time": 24, "value": 5}],
+                      "nutrient_flora_duo_b": [{"start_time": 0, "end_time": 6, "value": 2}],
+                      "light_illuminance": [{"start_time": 0, "end_time": 6, "value": 4},
+                                            {"start_time": 18, "end_time": 24, "value": 3}]
+                },
+          }
+        ]
+  }
