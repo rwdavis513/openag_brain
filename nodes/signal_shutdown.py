@@ -44,11 +44,11 @@ def check_for_shutdown(pub13):
                 time.sleep(0.001)
             avg_signal = input_sum / ( VERIFICATION_TIME_SEC * 1000)
             rospy.logdebug('The average signal after {} seconds was {}'.format(
-                         VERIFICATION_TIME_SEC, avg_signal)
+                           VERIFICATION_TIME_SEC, avg_signal))
             if avg_signal < SHUTDOWN_SIGNAL_THRESHOLD:
                 rospy.logwarn('Signal interrupted, breaking out of safe shutdown sequence')
                 successful_debounce = False
-                break
+                continue
 
             if successful_debounce:
                 rospy.logdebug('Safely shutting down')
