@@ -8,7 +8,7 @@ import time
 import os
 import logging
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import Float64
 
 # This is needed to account for any erroraneous drops in the shutdown signal
 VERIFICATION_TIME_SEC = 3          # Time to wait to verify shutdown signal
@@ -31,9 +31,10 @@ def setup_gpio_pins():
     GPIO.output(15, GPIO.HIGH)
 
 
-def check_for_shutdown():
+def check_for_shutdown(pub13):
     # Monitor pin for stable signal to safely shutdown
     while not rospy.is_shutdown():
+        pub13.publish(GPIO.input(13))
         if not GPIO.input(13):
             rospy.logdebug('Initiating safe shutdown sequence')
             successful_debounce = True
@@ -54,15 +55,16 @@ def check_for_shutdown():
                 rospy.signal_shutdown('Safely shutting down due to Power Off Button')
                 time.sleep(5)
                 GPIO.output(15, GPIO.LOW)
-                os.system('sudo shutdown -r now')
+                os.system("sudo shutdown -h now")
                 break
         rospy.sleep(1.)
 
 
 if __name__ == '__main__':
     rospy.init_node('signal_shutdown')
+    pub13 = rospy.Publisher("/GPIO/13", Float64, queue_size=10)
     setup_gpio_pins()
     try:
-        check_for_shutdown()
+        check_for_shutdown(pub13)
     except rospy.ROSInterruptException:
         pass
