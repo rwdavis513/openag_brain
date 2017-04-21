@@ -10,16 +10,23 @@ import logging
 import rospy
 from std_msgs.msg import String
 
+# This is needed to account for any erroraneous drops in the shutdown signal
+VERIFICATION_TIME_SEC = 3          # Time to wait to verify shutdown signal
+SHUTDOWN_SIGNAL_THRESHOLD = 0.98   # Percent of shutdown signals needed to
+                                   # signal a shutdown (ranges from 0 to 1)
+
 
 def setup_gpio_pins():
     # Use the Broadcom SOC Pin numbers
     # Setup the Pin with Internal pullups enabled and PIN in reading mode.
-    logger.debug('Setting GPIO27 / PIN13 to INPUT PULLUP')
+    rospy.logdebug('Setting GPIO27 / PIN13 to INPUT PULLUP')
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(13, GPIO.IN, pull_up_down = GPIO.PUD_UP) # PIN13 / BCM 27 YELLOW / SW-COM
+    # PIN13 / BCM 27 YELLOW / SW-COM - Signals Shutdown
+    GPIO.setup(13, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
     # Turn delay relay on
-    logger.debug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
+    # Sends signal to the relay to stay on until this drops low.
+    rospy.logdebug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
     GPIO.setup(15, GPIO.OUT) # PIN15 / BCM 22 / WHITE / CH1
     GPIO.output(15, GPIO.HIGH)
 
@@ -28,28 +35,31 @@ def check_for_shutdown():
     # Monitor pin for stable signal to safely shutdown
     while not rospy.is_shutdown():
         if not GPIO.input(13):
-            logger.debug('Initiating safe shutdown sequence')
+            rospy.logdebug('Initiating safe shutdown sequence')
             successful_debounce = True
-            for i in range(5000):
-                if GPIO.input(13):
-                    logger.debug('Signal interrupted, breaking out of safe shutdown sequence')
-                    successful_debounce = False
-                    break
+            input_sum = 0
+            for i in range(VERIFICATION_TIME_SEC * 1000):
+                input_sum += GPIO.input(13)
                 time.sleep(0.001)
+            avg_signal = input_sum / ( VERIFICATION_TIME_SEC * 1000)
+            rospy.logdebug('The average signal after {} seconds was {}'.format(
+                         VERIFICATION_TIME_SEC, avg_signal)
+            if avg_signal < SHUTDOWN_SIGNAL_THRESHOLD:
+                rospy.logwarn('Signal interrupted, breaking out of safe shutdown sequence')
+                successful_debounce = False
+                break
+
             if successful_debounce:
-                logger.debug('Safely shutting down')
-                rospy.signal_shutdown("Safely shutting down due to Power Off Button")
+                rospy.logdebug('Safely shutting down')
+                rospy.signal_shutdown('Safely shutting down due to Power Off Button')
                 time.sleep(5)
                 GPIO.output(15, GPIO.LOW)
-                os.system("sudo shutdown -r now")
+                os.system('sudo shutdown -r now')
                 break
         rospy.sleep(1.)
 
 
 if __name__ == '__main__':
-    logging.basicConfig()
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
     rospy.init_node('signal_shutdown')
     setup_gpio_pins()
     try:
