@@ -61,7 +61,7 @@ def check_for_shutdown(pub13):
 
 
 if __name__ == '__main__':
-    rospy.init_node('signal_shutdown', log_level=rospy.DEBUG)
+    rospy.init_node('signal_shutdown')
     pub13 = rospy.Publisher("/GPIO/13", Float64, queue_size=10)
     setup_gpio_pins()
     try:
