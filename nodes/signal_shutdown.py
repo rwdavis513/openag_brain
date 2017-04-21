@@ -45,7 +45,7 @@ def check_for_shutdown(pub13):
             avg_signal = input_sum / ( VERIFICATION_TIME_SEC * 1000)
             rospy.logdebug('The average signal after {} seconds was {}'.format(
                            VERIFICATION_TIME_SEC, avg_signal))
-            if avg_signal < SHUTDOWN_SIGNAL_THRESHOLD:
+            if avg_signal > (1 - SHUTDOWN_SIGNAL_THRESHOLD):  # avg_signal should be 0 for 100% valid
                 rospy.logwarn('Signal interrupted, breaking out of safe shutdown sequence')
                 successful_debounce = False
                 continue
@@ -61,7 +61,7 @@ def check_for_shutdown(pub13):
 
 
 if __name__ == '__main__':
-    rospy.init_node('signal_shutdown')
+    rospy.init_node('signal_shutdown', log_level=rospy.DEBUG)
     pub13 = rospy.Publisher("/GPIO/13", Float64, queue_size=10)
     setup_gpio_pins()
     try:
