@@ -27,9 +27,10 @@ def setup_gpio_pins():
     # Sends signal to the relay to stay on until this drops low.
     rospy.logdebug('Setting GPIO22 / PIN15 to OUTPUT HIGH')
     gpio_15 = GPIO(15, "out") # PIN15 / BCM 22 / WHITE / CH1
+    return gpio_13, gpio_15
 
 
-def check_for_shutdown():
+def check_for_shutdown(gpio_13, gpio_15):
     # Monitor pin for stable signal to safely shutdown
     while not rospy.is_shutdown():
         shutdown_signal_pin = gpio_13.read()
@@ -61,8 +62,8 @@ def check_for_shutdown():
 
 if __name__ == '__main__':
     rospy.init_node('signal_shutdown')
-    setup_gpio_pins()
+    gpio_13, gpio_15 = setup_gpio_pins()
     try:
-        check_for_shutdown()
+        check_for_shutdown(gpio_13, gpio_15)
     except rospy.ROSInterruptException:
         pass
