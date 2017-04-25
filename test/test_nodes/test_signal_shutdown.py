@@ -20,5 +20,6 @@ class TestSignalShutdown(unittest.TestCase):
     def test_signal_shutdown(self):
         check_for_shutdown()
 
-if __name__ == '__main__':
-    unittest.main()
+if __name__ == "__main__":
+    import rostest
+    rostest.rosrun(PKG, NAME, TestSignalShutdown)
