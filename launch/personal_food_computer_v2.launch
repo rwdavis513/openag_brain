@@ -61,8 +61,8 @@
     </node>
   </group>
   <node pkg="openag_brain" type="expand_diagnostics.py" name="expand_diagnostics"/>
-  <node pkg="openag_brain" type="handle_arduino.py" name="arduino_handler">
-    <param name="serial_port" value="/dev/ttyACM0" type="str"/>
+  <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+    <param name="port" value="/dev/ttyACM0"/>
   </node>
   <node pkg="openag_brain" type="api.py" name="api"/>
   <node pkg="openag_brain" type="topic_connector.py" name="topic_connector" />
