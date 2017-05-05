@@ -31,7 +31,7 @@ def setup_gpio_pins():
     GPIO.output(15, GPIO.HIGH)
 
 
-def check_for_shutdown(pub13):
+def check_for_shutdown():
     # Monitor pin for stable signal to safely shutdown
     while not rospy.is_shutdown():
         rospy.logdebug("GPIO13: {}".format(GPIO.input(13)))
@@ -64,6 +64,6 @@ if __name__ == '__main__':
     rospy.init_node('signal_shutdown')
     setup_gpio_pins()
     try:
-        check_for_shutdown(pub13)
+        check_for_shutdown()
     except rospy.ROSInterruptException:
         pass
