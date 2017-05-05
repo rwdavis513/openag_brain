@@ -18,6 +18,7 @@ class TestSignalShutdown(unittest.TestCase):
         setup_gpio_pins()
 
     def test_signal_shutdown(self):
+        setup_gpio_pins()
         check_for_shutdown()
 
 if __name__ == "__main__":
