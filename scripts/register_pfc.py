@@ -91,10 +91,17 @@ def handle_ssh_response(ssh_tunnel, password):
                    (pexpect.EOF, None)]
     response = ssh_tunnel.expect([option[0] for option in ssh_options])
     time.sleep(1)
-    if response != 2:
-        #print("{:d}: Response received: {}  Sending Command: {}".format(response, ssh_options[response][0], ssh_options[response][1]))
+    if response < 2:
+        print("{:d}: Response received: {}  Sending Command: {}".format(response, ssh_options[response][0], ssh_options[response][1]))
         ssh_tunnel.sendline(ssh_options[response][1])  #send the correct option
         handle_ssh_response(ssh_tunnel, password)
+    elif response == len(ssh_options) - 1:
+        # If the end of stream is found, return succesfully
+        pass
+    else:
+        # If another option was hit raise an error.
+        raise Exception("Error: Response was not captured. Run ssh command by hand to investiage issue. Response = {}".format(response))
+
 
 def create_ssh_tunnel(tunnel_command, password):
     """ Creates a Reverse SSH Tunnel to allow the Cloud to talk to the PFC
