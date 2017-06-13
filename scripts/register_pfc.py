@@ -85,6 +85,17 @@ def check_for_tunnel_info(file_name='tunnel_info.json'):
         return tunnel_info
 
 
+def handle_ssh_response(ssh_tunnel, password):
+    ssh_options = [('Are you sure you want to continue connecting', 'Yes'),
+                   ('password', password),
+                   (pexpect.EOF, None)]
+    response = ssh_tunnel.expect([option[0] for option in ssh_options])
+    time.sleep(1)
+    if response != 2:
+        #print("{:d}: Response received: {}  Sending Command: {}".format(response, ssh_options[response][0], ssh_options[response][1]))
+        ssh_tunnel.sendline(ssh_options[response][1])  #send the correct option
+        handle_ssh_response(ssh_tunnel, password)
+
 def create_ssh_tunnel(tunnel_command, password):
     """ Creates a Reverse SSH Tunnel to allow the Cloud to talk to the PFC
     Need to account for the RSA Fingerprint prompt: 
@@ -92,16 +103,14 @@ def create_ssh_tunnel(tunnel_command, password):
     RSA key fingerprint is 67:54:e8:e4:d8:ae:e0:61:11:1e:f5:5c:77:d6:83:de.
     Are you sure you want to continue connecting (yes/no)? yes
     """
-    try:
-        ssh_tunnel = pexpect.spawn(tunnel_command)
-        ssh_tunnel.expect('password:')
-        time.sleep(1)
-        ssh_tunnel.sendline(password)
-        time.sleep(10) # Cygwin is slow to update process status.
-        ssh_tunnel.expect (pexpect.EOF)
-        print("SSH tunnel created!")
-    except Exception as e:
-        print(str(e))
+    #try:
+    ssh_tunnel = pexpect.spawn(tunnel_command)
+    handle_ssh_response(ssh_tunnel, password)
+    time.sleep(10) # Cygwin is slow to update process status.
+    #ssh_tunnel.expect (pexpect.EOF)
+    print("SSH tunnel created!")
+    #except Exception as e:
+    #    print(str(e))
 
 
 def get_pfc_uuid():

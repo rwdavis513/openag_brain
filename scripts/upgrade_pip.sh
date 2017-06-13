@@ -9,3 +9,4 @@ sudo python get-pip.py --prefix=/usr/local
 rm get-pip.py
 
 sudo pip install pexpect
+sudo pip install pytest
