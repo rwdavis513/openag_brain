@@ -147,9 +147,11 @@ def add_pfc_to_cloud(session, pfc_url):
     pfc_data['name'] = get_pfc_name()   # Return the PFCs host name
     pfc_data['uuid'] = get_pfc_uuid()   # Return the PFCs UUID based on the Mac Address and Serial Number (hostname)
     API_REGISTRATION_END_POINT = "/pfc"
-    session.put(SERVER_URL + API_REGISTRATION_END_POINT, json=pfc_data)
+    res = session.put(SERVER_URL + API_REGISTRATION_END_POINT, json=pfc_data)
     # Add Error checking
-
+    if res.status_code != 201:
+        print(res.text)
+        raise Exception("Failed to register PFC. Status_code: 201 != {}".format(res.status_code))
 def add_pfc(tunnel_info, session=None):
     """
     Adds a PFC to the Users Account
