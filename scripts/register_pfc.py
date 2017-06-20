@@ -151,7 +151,11 @@ def add_pfc_to_cloud(session, pfc_url):
     # Add Error checking
     if res.status_code != 201:
         print(res.text)
+        if "already is being used" in res.text:
+            print(res.json())
+            raise Exception("PFC is already registered under another person's account. Cannot register pfc twice without a new name.")
         raise Exception("Failed to register PFC. Status_code: 201 != {}".format(res.status_code))
+
 def add_pfc(tunnel_info, session=None):
     """
     Adds a PFC to the Users Account
