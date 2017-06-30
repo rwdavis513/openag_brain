@@ -84,6 +84,7 @@ def check_for_tunnel_info(file_name='tunnel_info.json'):
     file_name = os.path.join(SSH_FOLDER, file_name)
     if os.path.exists(file_name):
         if time.time() - os.path.getmtime(file_name) < 72*3600:   # If it is older than 72 hours, remove it.
+            print("Removing old tunnel info file: {}".format(file_name))
             remove_tunnel_info(file_name)
         else:
             with open(file_name, 'r') as f:
@@ -154,7 +155,9 @@ def add_pfc_to_cloud(session, pfc_url):
     pfc_data['uuid'] = get_pfc_uuid()   # Return the PFCs UUID based on the Mac Address and Serial Number (hostname)
     API_REGISTRATION_END_POINT = "/pfc"
     res = session.put(SERVER_URL + API_REGISTRATION_END_POINT, json=pfc_data)
-    # Add Error checking
+    print("Registering pfc...")
+    print(pfc_data)
+    # TODO: Add Error checking
     if res.status_code != 201:
         print(res.text)
         if "already is being used" in res.text:
