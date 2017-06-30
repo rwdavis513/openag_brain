@@ -14,10 +14,13 @@ login_info = {
         }
 
 # TODO: Add Tests for each function
-# TODO: Add check to account for RSA Fingerprint text
-# TODO: Modify UUID to a hash of the mac address or something unique to the pfc
 # TOOD: Modify the functions to be pure functions so they don't modify the session variable
 
+def remove_tunnel_info(file_name='tunnel_info.json'):
+    try:
+        os.remove(file_name)
+    except OSError:
+        pass
 
 def get_tunnel_info():
     """ 
@@ -80,9 +83,12 @@ def save_tunnel_info(tunnel_info, file_name='tunnel_info.json'):
 def check_for_tunnel_info(file_name='tunnel_info.json'):
     file_name = os.path.join(SSH_FOLDER, file_name)
     if os.path.exists(file_name):
-        with open(file_name, 'r') as f:
-            tunnel_info = json.load(f)
-        return tunnel_info
+        if time.time() - os.path.getmtime(file_name) < 72*3600:   # If it is older than 72 hours, remove it.
+            remove_tunnel_info(file_name)
+        else:
+            with open(file_name, 'r') as f:
+                tunnel_info = json.load(f)
+            return tunnel_info
 
 
 def handle_ssh_response(ssh_tunnel, password):
@@ -115,13 +121,13 @@ def create_ssh_tunnel(tunnel_command, password):
     handle_ssh_response(ssh_tunnel, password)
     time.sleep(10) # Cygwin is slow to update process status.
     #ssh_tunnel.expect (pexpect.EOF)
-    print("SSH tunnel created!")
+    print("Finished.")
     #except Exception as e:
     #    print(str(e))
 
 
 def get_pfc_uuid():
-    return str(uuid.uuid1())
+    return get_pfc_name() + "-" + str(uuid.getnode())
 
 
 def get_pfc_name():
